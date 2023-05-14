@@ -1,0 +1,14 @@
+import numpy as np
+import random as rand
+import matplotlib.pyplot as plt
+#enter number of symbols
+num_symbol = 8192
+#samples drawn from a random normal distribution of variance
+Z=np.random.normal(0,1,size=num_symbol)
+Power=np.mean(np.abs(Z**2))
+print("Mean Square Power = ", Power)
+fig=plt.figure(figsize=(8,4), dpi=80, facecolor='w', edgecolor='k')
+plt.plot(Z)
+plt.ylabel('Amplitude')
+plt.xlabel('Sample Index')
+plt.title('Real Gaussian Noise')
