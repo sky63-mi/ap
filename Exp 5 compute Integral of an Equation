@@ -1,0 +1,16 @@
+
+# import sympy for evaluating
+import sympy as sp
+x= sp.Symbol ('x')
+Expression=3.0*x**2+1
+print(Expression)
+print(sp.integrate(Expression,x))
+
+
+####Using scipy module
+from scipy.integrate import quad
+def f(x):
+ return 3.0*x**2+1
+i=quad(f,0,2)
+print(i[0])
+print(i[1])
