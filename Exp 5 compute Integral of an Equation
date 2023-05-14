@@ -7,6 +7,14 @@ print(Expression)
 print(sp.integrate(Expression,x))
 
 
+import sympy as sp
+from sympy import Symbol, integrate, exp,pprint, sin, pi
+x= sp.Symbol ('x')
+Expression=exp(-x)*((sin(3*x)))
+print(Expression)
+print(sp.integrate(Expression,x))
+
+
 ####Using scipy module
 from scipy.integrate import quad
 def f(x):
@@ -14,3 +22,16 @@ def f(x):
 i=quad(f,0,2)
 print(i[0])
 print(i[1])
+
+
+from sympy import Symbol, integrate, exp,pprint, sin, pi
+from scipy.integrate import quad
+import math
+x=sp. Symbol('x')
+def f(x):
+    return exp(-x)*((sin(3*x))) 
+i=quad(f,0,2*pi)
+print(i[0])
+print(i[1])
+
+
