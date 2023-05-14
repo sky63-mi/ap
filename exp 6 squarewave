@@ -1,0 +1,39 @@
+# Python program to generate Square Wave
+# First, call the necessary Python libraries
+import numpy as np
+from scipy import signal as sg
+import matplotlib.pyplot as plt
+# Use input statements to get the inputs from the user
+freq = 2
+amp = 2
+time = np.linspace(0, 2, 1000)
+# Plotting of Square Wave with duty cycle 30%
+sqsignal = amp*sg.square(2*np.pi*freq*time, duty=0.3)
+# Plotting the wave within a window or frame of specified size
+plt.figure(figsize=(10,4))
+# Labelling the figure
+plt.plot(time, sqsignal)
+plt.xlabel('Time (s)') # Give x axis label for the square wave plot
+plt.ylabel('Amplitude') # Give y axis label for the square wave plot
+plt.show() # Display the square wave 
+
+
+# Program to plot Square Wave
+from scipy import signal
+import matplotlib.pyplot as plot
+import numpy as np
+# Sampling rate 1000 hz / second
+t = np.linspace(0, 1, 1000, endpoint=True)
+# Plot the square wave signal
+plot.plot(t, signal.square(2 * np.pi * 5 * t))
+# Give a title and labels for the square wave plot
+plot.title('Sqaure wave - 5 Hz sampled at 1000 Hz /second')
+plot.xlabel('Time')
+plot.ylabel('Amplitude')
+plot.grid(True, which='both')
+# Provide x axis and line color
+plot.axhline(y=0, color='k')
+# Set the max and min values for y axis
+plot.ylim(-2, 2)
+# Display the square wave
+plot.show()
