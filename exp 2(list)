@@ -15,3 +15,12 @@ for i in range(n):
     result = result + Sum
 # Printing the result
 print(result)
+
+# 2b (ii) px=-4+2x+5x2+8x3, x=2
+p = {0: -4,1 :2,2: 5,3: 8}
+def eval_poly_dict(poly, x):
+    sum=0.0
+    for power in poly:
+        sum += poly[power]*x**power
+    return sum
+eval_poly_dict(p,2)
