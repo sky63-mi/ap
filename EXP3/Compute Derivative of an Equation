@@ -1,0 +1,35 @@
+# import sympy for evaluating
+from sympy import *
+
+x, y = symbols('x y')
+expr = x**2 + 2 * y + y**3
+print("Expression : {} ".format(expr))
+
+# Use sympy.Derivative() method
+expr_diff = Derivative(expr, x)
+
+print("Derivative of expression with respect to x : {}".format(expr_diff))
+print("Value of the derivative : {} ".format(expr_diff.doit()))
+
+
+
+##- Solving a differential with Sympy diff()
+#Importing sympy
+from sympy import *
+# create a "symbol" called x
+x = Symbol('x')
+#Define function
+f = x**2
+#Calculating Derivative
+derivative_f = f.diff(x)
+derivative_f
+
+#Calculate the derivative of the function at x = 2 sympy has lambdify function in which we pass the symbol and the function.
+from sympy import *
+#create a "symbol" called x
+x = Symbol('x')
+#Define function
+f = x**2
+f1 = lambdify(x, f)
+#passing x=2 to the function
+f1(2)
