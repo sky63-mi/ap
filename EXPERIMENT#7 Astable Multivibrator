@@ -1,0 +1,77 @@
+import math
+import matplotlib.pyplot as plt
+
+vin = 5.0  # Voltage in
+out_high = 3.3  # Voltage output from pin 3 of IC 555 when "high"
+out_low = 0.25  # Voltage output from pin 3 of IC 555 when "low"
+farads = 2 / 1000000  # Capacitance of primary capacitor, which connects both the
+# threshold (pin 6) and trigger (pin 2) to ground.
+
+ohms_R1 = 1000  # Resistance in ohms of resistor R1, which connects the
+# discharge (pin 7) and resistor to positive voltage.
+# The primary capacitor charges through this resistor,
+# but does not discharge through it.
+
+ohms_R2 = 10000  # Resistance in ohms of resistor R2, which both discharges
+# the capacitor through pin 7 and charges it from the end
+# of resistor A. Connects to the threshold (pin 6), trigger
+# (pin 2) and the primary capacitor.
+sim_time = 0.25  # Length of time to run the simulation (in seconds)
+step = sim_time / 1000  # Time increment for each simulation step (in seconds)
+
+
+#### Utility functions ######################################################
+def update_latch(latch, trigger, threshold, vin):
+    if trigger < vin / 3:
+        latch = True
+    if threshold > vin * 2 / 3:
+        latch = False
+    return latch
+
+
+def update_capacitor(cap, farads, res_1, res_2, vin, latch, step):
+    if latch:
+        tc = farads * (res_1 + res_2)  # Time proportion
+        tp = step / tc  # Percent change from existing voltage to full voltage (vin)
+        pc = 1 - (1 / math.e ** tp)  # e-t
+        cap = cap + (vin - cap) * pc
+    else:
+        tc = farads * res_2  # Time proportion
+        tp = step / tc  # Percent change from existing voltage down to zero
+        pc = 1 - (1 / math.e ** tp)
+        cap = cap - cap * pc
+    return cap
+
+
+#### Setup ##########################################################
+time = 0
+cap = 0
+latch = True
+vout = out_high
+
+# Vectors to store simulated states
+cap_list = []
+out_list = []
+time_list = []
+
+#### Simulate #########################################################
+while time < sim_time:
+    cap = update_capacitor(cap, farads, ohms_R1, ohms_R2, vin, latch, step)
+    latch = update_latch(latch, cap, cap, vin)
+    if latch:
+        vout = out_high
+    else:
+        vout = out_low
+    cap_list.append(cap)
+    out_list.append(vout)
+    time_list.append(time)
+    time += step
+
+#### Plot ##########################################################
+plt.plot(time_list, cap_list, label='Capacitor')  # Capacitor voltages
+plt.plot(time_list, out_list, label='Output')  # Output (Q) voltages
+plt.xlabel('Time (Seconds)')
+plt.ylabel('Volts')
+plt.ylim(0, vin)
+plt.legend(loc='upper right')
+plt.show()
