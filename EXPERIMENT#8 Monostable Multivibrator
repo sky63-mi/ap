@@ -1,0 +1,104 @@
+import math
+import matplotlib.pyplot as pplot
+import random
+
+vin = 5.0
+out_high = 3.3
+out_low = 0.25
+farads = 0.46/1000000
+ohms = 1000000
+sim_time = 3
+step = sim_time / 1000
+button_start_time = 0.5
+button_hold_time = 0.5
+bounce_time = 0.07
+
+bounce_prob = 0.33
+unbounce_prob = 0.5
+if bounce_time>button_hold_time:
+    bounce_time=button_hold_time
+def update_latch(latch, trigger, threshold, vin):
+    if trigger < vin / 3:
+        latch = True
+
+    if threshold > vin * 2 / 3:
+        latch = False
+
+    return latch
+
+def update_capacitor(cap, farads, ohms, vin, latch, step):
+    if latch:
+        tc = farads * ohms
+        tp = step / tc
+        pc = 1 - (1/math.e**tp)
+        cap += (vin - cap) * pc
+    else:
+        cap = 0
+
+    return cap
+trigger = vin
+latch = False
+vout = out_low
+cap = 0
+pre_trigger_steps = round(button_start_time / step)
+trigger_list = [trigger] * pre_trigger_steps
+cap_list = [cap] * pre_trigger_steps
+out_list = [vout] * pre_trigger_steps
+time_list = [i * step for i in range(pre_trigger_steps)]
+time = button_start_time
+
+random.seed(8675309)
+trigger=0
+button_time = 0
+
+while time < sim_time:
+    latch = update_latch(latch, trigger, cap, vin)
+    cap = update_capacitor(cap, farads, ohms, vin, latch, step)
+
+    if latch:
+        vout = out_high
+    else:
+        vout = out_low
+
+    trigger_list.append(trigger)
+    cap_list.append(cap)
+    out_list.append(vout)
+    time_list.append(time)
+    time += step
+    button_time += step
+
+    if button_time <= bounce_time:
+        r = random.randint(0, 100) / 100
+
+        if trigger == 0 and r < bounce_prob:
+            trigger = vin
+        elif trigger != 0 and r < unbounce_prob:
+            trigger = 0
+        else:
+            if button_time > button_hold_time:
+                trigger = vin
+            else:
+                trigger = 0
+
+print()
+print('Capacitor: ' + str(farads * 1000000) + 'mf')
+print('Resistor: ' + str(ohms/1000) + 'K')
+print('Vcc: +' + str(vin) + 'V')
+print()
+
+time_high = round(1.1 * ohms * farads, 2)
+print('Time high: ' + str(time_high*1000) + 'ms')
+print('Periods simulated: ' + str(len(time_list)))
+print('Bounce time: ' + str(bounce_time*1000) + 'ms')
+print()
+pplot.plot(time_list, trigger_list, linewidth=0.7, label='Trigger (Pin 2)')
+# Output (Q) voltages
+pplot.plot(time_list, out_list, label='Output (Pin 3)')
+# Capacitor voltages
+pplot.plot(time_list, cap_list, label='Capacitor')
+pplot.xlabel('Time (Seconds)')
+pplot.ylabel('Volts') 
+pplot.ylim(0-vin*0.1,vin*1.1)
+pplot.legend(loc='upper right')
+pplot.show() 
+
